@@ -1,0 +1,144 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>To-Do List with Edit Option</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #A3D6CA;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      width: 250px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      padding: 10px 12px;
+      background-color: #007B7F;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      margin-left: 5px;
+      cursor: pointer;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      background-color: #fff;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    li.completed span.task-text {
+      text-decoration: line-through;
+      color: gray;
+    }
+
+    .btn-group button {
+      margin-left: 5px;
+    }
+
+    .edit-mode input {
+      width: 100%;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>To-Do List App</h1>
+  <input type="text" id="taskInput" placeholder="Enter your task">
+  <button onclick="addTask()">Add</button>
+
+  <ul id="taskList"></ul>
+
+  <script>
+    function addTask() {
+      const input = document.getElementById("taskInput");
+      const taskText = input.value.trim();
+
+      if (taskText === "") {
+        alert("Please enter a task.");
+        return;
+      }
+
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <span class="task-text" onclick="toggleComplete(this)">${taskText}</span>
+        <div class="btn-group">
+          <button onclick="editTask(this)">Edit</button>
+          <button onclick="deleteTask(this)" style="background-color:#FF5252;">Delete</button>
+        </div>
+      `;
+      document.getElementById("taskList").appendChild(li);
+      input.value = "";
+    }
+
+    function deleteTask(button) {
+      const li = button.closest("li");
+      li.remove();
+    }
+
+    function toggleComplete(span) {
+      const li = span.closest("li");
+      li.classList.toggle("completed");
+    }
+
+    function editTask(button) {
+      const li = button.closest("li");
+
+      if (li.classList.contains("edit-mode")) {
+        // Save updated task
+        const inputField = li.querySelector("input");
+        const newText = inputField.value.trim();
+
+        if (newText === "") {
+          alert("Task cannot be empty.");
+          return;
+        }
+
+        li.querySelector(".task-text").textContent = newText;
+        li.classList.remove("edit-mode");
+        li.innerHTML = `
+          <span class="task-text" onclick="toggleComplete(this)">${newText}</span>
+          <div class="btn-group">
+            <button onclick="editTask(this)">Edit</button>
+            <button onclick="deleteTask(this)" style="background-color:#FF5252;">Delete</button>
+          </div>
+        `;
+      } else {
+        // Enter edit mode
+        const currentText = li.querySelector(".task-text").textContent;
+        li.classList.add("edit-mode");
+
+        li.innerHTML = `
+          <input type="text" value="${currentText}">
+          <div class="btn-group">
+            <button onclick="editTask(this)">Save</button>
+            <button onclick="deleteTask(this)" style="background-color:#FF5252;">Delete</button>
+          </div>
+        `;
+      }
+    }
+  </script>
+
+</body>
+</html>
